@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           getPages: getPages,
           unknownRoute: GetPage(name: "/not-found", page: () => SplashScreen()),
-          initialRoute: AppRoutes.splashScreen,
+          initialRoute: AppRoutes.homeScreen,
         );
       },
     );
