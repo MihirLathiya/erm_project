@@ -1,0 +1,99 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+import 'package:go_router_demo/controller/bottom_bar_controller.dart';
+
+final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+class ScaffoldWithNestedNavigation extends StatelessWidget {
+  ScaffoldWithNestedNavigation({
+    Key? key,
+    required this.navigationShell,
+  }) : super(
+            key: key ?? const ValueKey<String>('ScaffoldWithNestedNavigation'));
+  final StatefulNavigationShell navigationShell;
+  MainController mainController = Get.put(MainController());
+
+  void _goBranch(int index) {
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<MainController>(
+      builder: (controller) {
+        return Scaffold(
+          appBar: AppBar(),
+          key: _scaffoldKey,
+          drawer: MediaQuery.of(context).size.width <= 910
+              ? DrawerWidget(controller)
+              : SizedBox(),
+          body: Row(
+            children: [
+              if (MediaQuery.of(context).size.width > 910)
+                DrawerWidget(controller),
+              const VerticalDivider(thickness: 1, width: 1),
+              // This is the main content.
+              Expanded(
+                child: navigationShell,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  SizedBox DrawerWidget(MainController controller) {
+    return SizedBox(
+      height: double.infinity,
+      width: 300,
+      child: Column(
+        children: [
+          ...List.generate(2, (index) {
+            return ListTile(
+              textColor: navigationShell.currentIndex == index
+                  ? Colors.red
+                  : Colors.green,
+              onTap: () {
+                _goBranch(index);
+              },
+              title: Text(
+                index == 0 ? 'Home' : 'Setting',
+              ),
+            );
+          })
+        ],
+      ),
+    );
+  }
+}
+// class ScaffoldWithNavigationBar extends StatelessWidget {
+//   const ScaffoldWithNavigationBar({
+//     super.key,
+//     required this.body,
+//     required this.selectedIndex,
+//     required this.onDestinationSelected,
+//   });
+//   final Widget body;
+//   final int selectedIndex;
+//   final ValueChanged<int> onDestinationSelected;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: body,
+//       bottomNavigationBar: NavigationBar(
+//         selectedIndex: selectedIndex,
+//         destinations: const [
+//           NavigationDestination(label: 'Section A', icon: Icon(Icons.home)),
+//           NavigationDestination(label: 'Section B', icon: Icon(Icons.settings)),
+//         ],
+//         onDestinationSelected: onDestinationSelected,
+//       ),
+//     );
+//   }
+// }
